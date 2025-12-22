@@ -4,7 +4,6 @@ const xenditClient = new Xendit({
     secretKey: process.env.XENDIT_SECRET_KEY || '',
 })
 
-// Get Invoice instance
 const { Invoice } = xenditClient
 
 interface CreateInvoiceParams {
@@ -18,49 +17,38 @@ interface CreateInvoiceParams {
 interface InvoiceResponse {
     id: string
     external_id: string
-    user_id: string
-    status: string
-    merchant_name: string
-    amount: number
-    expiry_date: string
     invoice_url: string
-    created: string
-    updated: string
+    status: string
+    amount: number
 }
 
 /**
  * Create a Xendit invoice with QRIS payment
  */
 export async function createInvoice(params: CreateInvoiceParams): Promise<InvoiceResponse> {
-    const invoiceInstance = new Invoice({})
+    const invoiceService = new Invoice({})
 
-    const invoice = await invoiceInstance.createInvoice({
-        data: {
-            externalId: params.externalId,
-            amount: params.amount,
-            description: params.description,
-            customer: params.customerName ? {
-                givenNames: params.customerName,
-            } : undefined,
-            paymentMethods: ['QRIS'],
-            invoiceDuration: 86400,
-            currency: 'IDR',
-            successRedirectUrl: process.env.WEBHOOK_URL + '/success',
-            failureRedirectUrl: process.env.WEBHOOK_URL + '/failed',
-        }
-    })
+    const invoice = await invoiceService.createInvoice({
+        externalID: params.externalId,
+        amount: params.amount,
+        description: params.description,
+        payerEmail: params.payerEmail,
+        customer: params.customerName ? {
+            givenNames: params.customerName,
+        } : undefined,
+        paymentMethods: ['QRIS'],
+        invoiceDuration: 86400,
+        currency: 'IDR',
+        successRedirectURL: process.env.WEBHOOK_URL + '/success',
+        failureRedirectURL: process.env.WEBHOOK_URL + '/failed',
+    }) as Record<string, unknown>
 
     return {
-        id: invoice.id || '',
-        external_id: invoice.externalId || '',
-        user_id: invoice.userId || '',
-        status: invoice.status || '',
-        merchant_name: invoice.merchantName || '',
-        amount: invoice.amount || 0,
-        expiry_date: invoice.expiryDate?.toString() || '',
-        invoice_url: invoice.invoiceUrl || '',
-        created: invoice.created?.toString() || '',
-        updated: invoice.updated?.toString() || '',
+        id: (invoice.id as string) || '',
+        external_id: (invoice.external_id as string) || '',
+        invoice_url: (invoice.invoice_url as string) || '',
+        status: (invoice.status as string) || '',
+        amount: (invoice.amount as number) || 0,
     }
 }
 
@@ -68,23 +56,18 @@ export async function createInvoice(params: CreateInvoiceParams): Promise<Invoic
  * Get invoice details by ID
  */
 export async function getInvoice(invoiceId: string): Promise<InvoiceResponse> {
-    const invoiceInstance = new Invoice({})
+    const invoiceService = new Invoice({})
 
-    const invoice = await invoiceInstance.getInvoiceById({
-        invoiceId: invoiceId
-    })
+    const invoice = await invoiceService.getInvoice({
+        invoiceID: invoiceId
+    }) as Record<string, unknown>
 
     return {
-        id: invoice.id || '',
-        external_id: invoice.externalId || '',
-        user_id: invoice.userId || '',
-        status: invoice.status || '',
-        merchant_name: invoice.merchantName || '',
-        amount: invoice.amount || 0,
-        expiry_date: invoice.expiryDate?.toString() || '',
-        invoice_url: invoice.invoiceUrl || '',
-        created: invoice.created?.toString() || '',
-        updated: invoice.updated?.toString() || '',
+        id: (invoice.id as string) || '',
+        external_id: (invoice.external_id as string) || '',
+        invoice_url: (invoice.invoice_url as string) || '',
+        status: (invoice.status as string) || '',
+        amount: (invoice.amount as number) || 0,
     }
 }
 
