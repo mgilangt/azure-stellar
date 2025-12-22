@@ -8,6 +8,8 @@ import { createWebhookRoutes } from './routes/webhook'
 import { prisma } from './lib/prisma'
 import { getInvoice } from './services/xendit'
 import { deliverContent } from './services/delivery'
+import { readFileSync } from 'fs'
+import { join } from 'path'
 
 async function main() {
     // Initialize Hono app
@@ -24,13 +26,30 @@ async function main() {
     const webhookRoutes = createWebhookRoutes(bot)
     app.route('/webhook', webhookRoutes)
 
-    // Root route
+    // Root route - serve landing page
     app.get('/', (c) => {
-        return c.json({
-            name: 'Telegram Shop Bot',
-            version: '1.0.0',
-            status: 'running',
-        })
+        const landingHtml = readFileSync(join(__dirname, 'view', 'landing.html'), 'utf-8')
+        return c.html(landingHtml)
+    })
+
+    // Watch route - serve video player page
+    app.get('/watch', (c) => {
+        const watchHtml = readFileSync(join(__dirname, 'view', 'watch.html'), 'utf-8')
+        return c.html(watchHtml)
+    })
+
+    // Serve assets (logo, images, etc.)
+    app.get('/assets/:filename', (c) => {
+        const filename = c.req.param('filename')
+        const filepath = join(__dirname, 'view', 'assets', filename)
+        try {
+            const file = readFileSync(filepath)
+            const ext = filename.split('.').pop()?.toLowerCase()
+            const contentType = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'application/octet-stream'
+            return new Response(file, { headers: { 'Content-Type': contentType } })
+        } catch {
+            return c.notFound()
+        }
     })
 
     // Payment success redirect (after user pays via QRIS)

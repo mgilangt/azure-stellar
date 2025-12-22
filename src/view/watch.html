@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Miniseri - Bukan Drama Korea, Ini Drama Tetangga!</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#EE1D93",
+                        "primary-dark": "#EE272E",
+                        "background-light": "#f7f5f8",
+                        "background-dark": "#1c1022",
+                        "surface-dark": "#2d1b36",
+                        "telegram": "#24A1DE",
+                        "telegram-dark": "#208bbf",
+                    },
+                    fontFamily: {
+                        "display": ["Be Vietnam Pro", "sans-serif"],
+                        "sans": ["Be Vietnam Pro", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "2xl": "2rem",
+                        "3xl": "2.5rem",
+                        "full": "9999px"
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'brand-gradient': 'linear-gradient(135deg, #EE1D93 0%, #EE272E 100%)',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-[#1a0f1f] text-slate-900 dark:text-white font-display antialiased selection:bg-primary selection:text-white overflow-hidden">
+    <div class="flex flex-col h-screen relative">
+        <div class="fixed top-0 left-0 w-full h-full bg-brand-gradient opacity-10 -z-20"></div>
+        <div
+            class="fixed top-[-20%] right-[-10%] w-[800px] h-[800px] bg-[#EE1D93] blur-[150px] rounded-full pointer-events-none -z-10 opacity-20">
+        </div>
+        <div
+            class="fixed bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-[#EE272E] blur-[150px] rounded-full pointer-events-none -z-10 opacity-20">
+        </div>
+        <!-- Close Button -->
+        <a href="/"
+            class="fixed top-4 left-4 z-50 size-10 bg-black/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors border border-white/10">
+            <span class="material-symbols-outlined text-xl">close</span>
+        </a>
+
+        <main class="flex-grow flex items-center justify-center p-4 lg:p-6 w-full h-full overflow-hidden">
+            <div
+                class="w-full max-w-6xl h-full max-h-[900px] flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-start justify-center">
+                <!-- Video Player Container -->
+                <div id="videoContainer"
+                    class="relative h-full aspect-[9/16] max-h-full bg-black rounded-2xl lg:rounded-3xl shadow-2xl overflow-hidden group border border-white/10 shrink-0 cursor-pointer">
+
+                    <!-- Thumbnail/Poster (shown when video not playing) -->
+                    <div id="videoPoster" class="absolute inset-0 bg-cover bg-center transition-opacity duration-300"
+                        style="background-image: url('https://images.pexels.com/photos/35278080/pexels-photo-35278080.jpeg');">
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60"></div>
+                    </div>
+
+                    <!-- Video Element -->
+                    <video id="mainVideo"
+                        class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300"
+                        playsinline loop
+                        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4">
+                    </video>
+
+                    <!-- Top Overlay -->
+                    <div
+                        class="absolute top-0 left-0 right-0 p-6 flex justify-between items-start z-10 bg-gradient-to-b from-black/60 to-transparent">
+                        <div
+                            class="bg-black/30 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-xs font-bold uppercase tracking-wider text-white/90">
+                            Episode 1
+                        </div>
+                        <button
+                            class="bg-black/30 backdrop-blur-md rounded-full p-2 text-white hover:bg-white/20 transition-colors">
+                            <span class="material-symbols-outlined text-xl">cast</span>
+                        </button>
+                    </div>
+
+                    <!-- Play Button Overlay -->
+                    <div id="playButtonOverlay"
+                        class="absolute inset-0 flex items-center justify-center z-10 transition-opacity duration-300">
+                        <div id="playButton"
+                            class="size-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:scale-110 hover:bg-brand-gradient transition-all duration-300 border border-white/30 hover:border-transparent cursor-pointer shadow-lg">
+                            <span id="playIcon"
+                                class="material-symbols-outlined text-5xl ml-1 fill-current">play_arrow</span>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Controls -->
+                    <div id="videoControls"
+                        class="absolute bottom-0 left-0 right-0 px-6 py-6 z-20 bg-gradient-to-t from-black via-black/60 to-transparent">
+                        <!-- Progress Bar -->
+                        <div id="progressContainer"
+                            class="w-full h-1.5 bg-white/20 rounded-full overflow-hidden mb-4 cursor-pointer hover:h-2 transition-all group/progress">
+                            <div id="progressBar"
+                                class="h-full w-0 bg-brand-gradient rounded-full relative transition-all">
+                                <div
+                                    class="absolute right-0 top-1/2 -translate-y-1/2 size-3 bg-white rounded-full shadow-md opacity-0 group-hover/progress:opacity-100 transition-opacity">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center text-white">
+                            <div class="flex items-center gap-4">
+                                <button id="controlPlayBtn" class="hover:text-primary transition-colors">
+                                    <span id="controlPlayIcon"
+                                        class="material-symbols-outlined fill-current text-3xl">play_arrow</span>
+                                </button>
+                                <div class="flex items-center gap-2 group/vol">
+                                    <button id="muteBtn" class="hover:text-primary transition-colors">
+                                        <span id="volumeIcon"
+                                            class="material-symbols-outlined text-2xl">volume_up</span>
+                                    </button>
+                                    <div class="w-0 overflow-hidden group-hover/vol:w-20 transition-all duration-300">
+                                        <input id="volumeSlider" type="range" min="0" max="1" step="0.1" value="1"
+                                            class="w-16 h-1 bg-white/30 rounded-full ml-2 accent-primary cursor-pointer">
+                                    </div>
+                                </div>
+                                <span id="timeDisplay" class="text-sm font-medium ml-2">0:00 / 0:00</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button class="hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-2xl">hd</span>
+                                </button>
+                                <button id="fullscreenBtn" class="hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-2xl">fullscreen</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Info & Comments -->
+                <div
+                    class="flex-1 h-full w-full lg:w-auto bg-[#2d1b36]/40 backdrop-blur-xl border border-white/5 rounded-2xl lg:rounded-3xl flex flex-col overflow-hidden relative shadow-2xl">
+                    <div class="p-6 border-b border-white/5 bg-white/[0.02]">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="size-12 rounded-full bg-cover border border-white/20"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDk86Cv_-Rh9nhLivIBV4o2DsitUjOOAwRDZk7wkN6NJbcS8CHVQYchaFWEZaSwXkshmojGxTvRLYSejHvgCsbVQNEH3z1aVE-7Hxh2hZepaehdGrtyis3cxvqReV6Wm2hRmzxMyqWMHUOFvXV-s-kyTuXjx7PdK4srTLA5UBgkmeRcPMwZ-baE9giynIX4K0bKYSrqTNFN0DxgGkdw4Dz8I0PnI64bEBugQ5scFh0RyNKcMegTlbwQuSz7S-soWBYmY09fMgeA5az6');">
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-bold text-lg leading-tight">Cinta di Jakarta</h3>
+                                    <p class="text-slate-400 text-sm">@miniseriofficial</p>
+                                </div>
+                            </div>
+                            <button
+                                class="bg-primary hover:bg-primary-dark text-white text-sm font-bold px-5 py-2 rounded-full transition-colors shadow-lg shadow-primary/20">
+                                Follow
+                            </button>
+                        </div>
+                        <p class="text-slate-200 text-sm leading-relaxed mb-4">
+                            Kisah cinta paling baper tahun ini! Pertemuan yang tak terduga mengubah segalanya. 😭❤️
+                            <span class="text-primary hover:underline cursor-pointer">#CintaDiJakarta</span> <span
+                                class="text-primary hover:underline cursor-pointer">#Romance</span>
+                        </p>
+                        <div class="mb-4">
+                            <a href="https://t.me/Minser2025Bot" target="_blank"
+                                class="flex items-center justify-center gap-3 w-full bg-telegram hover:bg-telegram-dark text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-telegram/20 transform hover:-translate-y-0.5">
+                                <svg class="size-6 fill-current" role="img" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z">
+                                    </path>
+                                </svg>
+                                <span>Tonton Lebih Lanjut di Telegram</span>
+                                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                            </a>
+                        </div>
+                        <div class="flex items-center gap-6 border-t border-white/5 pt-4">
+                            <button
+                                class="flex items-center gap-2 text-slate-300 hover:text-primary transition-colors group">
+                                <span class="p-2 rounded-full bg-white/5 group-hover:bg-primary/20 transition-colors">
+                                    <span
+                                        class="material-symbols-outlined filled text-xl group-hover:text-primary transition-colors">favorite</span>
+                                </span>
+                                <span class="text-sm font-bold">12.5K</span>
+                            </button>
+                            <button
+                                class="flex items-center gap-2 text-slate-300 hover:text-blue-400 transition-colors group">
+                                <span class="p-2 rounded-full bg-white/5 group-hover:bg-blue-400/20 transition-colors">
+                                    <span
+                                        class="material-symbols-outlined text-xl group-hover:text-blue-400 transition-colors">chat_bubble</span>
+                                </span>
+                                <span class="text-sm font-bold">842</span>
+                            </button>
+                            <button
+                                class="flex items-center gap-2 text-slate-300 hover:text-green-400 transition-colors group">
+                                <span class="p-2 rounded-full bg-white/5 group-hover:bg-green-400/20 transition-colors">
+                                    <span
+                                        class="material-symbols-outlined text-xl group-hover:text-green-400 transition-colors">share</span>
+                                </span>
+                                <span class="text-sm font-bold">Share</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center border-b border-white/5">
+                        <button class="flex-1 py-3 text-sm font-bold text-white border-b-2 border-primary bg-white/5">
+                            Comments (842)
+                        </button>
+                        <button
+                            class="flex-1 py-3 text-sm font-bold text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors">
+                            Related Videos
+                        </button>
+                    </div>
+                    <div
+                        class="flex-1 overflow-y-auto p-0 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent hover:scrollbar-thumb-white/20 hide-scrollbar">
+                        <div class="flex flex-col">
+                            <div class="p-4 hover:bg-white/[0.02] border-b border-white/5 flex gap-3 group">
+                                <div class="size-8 rounded-full bg-slate-700 flex-shrink-0 bg-cover"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCxQkkQVvkUbjQ6jMy9K3BsqNtj07DdRFFeidlayXzrmSpoh7RIRddsvo9djLuJKMzndIEiiK7YrPgLqKQ4F7Jmm_zd1i_SnFzMACOI3yUoVwrWvmWNoKZAKsxVC4HRezCB9qTpFUAGMALKazpjIIZJfFF2wtD_tuE0gLi1NwbpFgNc8et5AxYtH5a4N8baX-9_tlqhoNFfYyMWk8HUR55YDnQOM5ha-SS-TyNDD_TYoEpFzXZV7S_Sdef2bNUFBcrgJ75L9yNy0M9L');">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-baseline justify-between mb-1">
+                                        <span class="text-xs font-bold text-slate-300">Sarah Jenkins</span>
+                                        <span class="text-[10px] text-slate-600">2 min ago</span>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-snug">Ya ampunnn endingnya gantung banget!
+                                        Gak sabar nunggu episode selanjutnya 😭😭</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-white flex items-center gap-1">Reply</button>
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-primary flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">favorite</span> 24
+                                        </button>
+                                    </div>
+                                </div>
+                                <button
+                                    class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-white">
+                                    <span class="material-symbols-outlined text-lg">more_vert</span>
+                                </button>
+                            </div>
+                            <div class="p-4 hover:bg-white/[0.02] border-b border-white/5 flex gap-3 group">
+                                <div class="size-8 rounded-full bg-slate-700 flex-shrink-0 bg-cover"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCHm_WP3Dn10y7Nm8g7yMcek9iBKvmCYiO7aJx6KeAfRI9v9QC_JmfY1zau0UekslfbGVqs2V7FuQ6YpEuJ957D1E70aSyz5f8qPQySg8rqUQlINXWdDTv_HSS6ilikmQtJzf1yH0WhQIErbyojcbK8CYkbVxXOj4QfKvim3X_jYLn_oSoSYkDasi4PC2oxLzfetptSPkfLEjqEJ_JyzaC_SnklEQV7yIiz-NeFP4BRk8qhJXEZQn3PNwgC3H9Yq1WJWOMKALgUFyZq');">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-baseline justify-between mb-1">
+                                        <span class="text-xs font-bold text-slate-300">Budi Santoso</span>
+                                        <span class="text-[10px] text-slate-600">15 min ago</span>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-snug">Visualnya keren parah sih ini, kayak
+                                        film bioskop 🔥</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-white flex items-center gap-1">Reply</button>
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-primary flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">favorite</span> 12
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 hover:bg-white/[0.02] border-b border-white/5 flex gap-3 group">
+                                <div class="size-8 rounded-full bg-slate-700 flex-shrink-0 bg-cover"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA1rDbQpoKjPtoCESTzpYM_3uu-QxsJ9zOt706whKLIr5ozk7QKQP6_jkbsSg9BZGmY_HDClDDTg_yVHj5gKm94epLmvG0_gWrxls-gOKUI1Lk1jHn1UQnWWOPWgzefclWCtqxaeYLT6Q6l6_cwmf-wUpZypD-IVhanSSguQDA83aLBlIT1oh59KbhBsI2HnBOyjuchdDvhO9_7-E95vvZCl7vMEGgA6Dw2tAzVyfyct6_ceTIrfHPFaZl_VkxAK9bcQxxvttoHg7_F');">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-baseline justify-between mb-1">
+                                        <span class="text-xs font-bold text-slate-300">Lina Marlina</span>
+                                        <span class="text-[10px] text-slate-600">1 hour ago</span>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-snug">Bot telegramnya fast response banget,
+                                        langsung dapet link nonton fullnya 👍</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-white flex items-center gap-1">Reply</button>
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-primary flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">favorite</span> 156
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 hover:bg-white/[0.02] border-b border-white/5 flex gap-3 group">
+                                <div class="size-8 rounded-full bg-slate-700 flex-shrink-0 bg-cover"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAPEHCsX40DLi5TrQRfa1LejR2FyAGrj4GLnAdZTQKdjgvIdzrTiCH8BclBzSoBPP3gx_6R40NucvOarvuu6GNb4iarpw3pXTs8qqcEjTrRuKaVkWtlC69GGOIikYNeIj6tdw3BKWBYxI4lxhiYzh46n6RVM6g0D9D_ELMEiNAWi0kr6ZBMpGc3neT5EXdjDzJ2T3NY7ufY5U1Cq1IpHUGLaLGejAkxTKPW7ad_X8rblsAIOMzgf7m317zrNThbIWSON4pfA51SerQ3');">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-baseline justify-between mb-1">
+                                        <span class="text-xs font-bold text-slate-300">Rizky Aditya</span>
+                                        <span class="text-[10px] text-slate-600">2 hours ago</span>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-snug">Min, kapan episode 2 rilis??</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-white flex items-center gap-1">Reply</button>
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-primary flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">favorite</span> 8
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 hover:bg-white/[0.02] border-b border-white/5 flex gap-3 group">
+                                <div class="size-8 rounded-full bg-slate-700 flex-shrink-0 bg-cover"
+                                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA-Va1llgV0DpqX1PME-AhxHOtC_IupzZTcm766yFP4EwaupHlWPADlctCyj_jolFQkE2TKGYTZ5N6pGKYvkL4CtQ4Sm9fCUF6vxArLY7feCEb1jkrkit8XrvOuysSXqX-QLNFc5RVnbhhqtkEWE7JZHdHgyk94uFQ3my1a4Pv-vYDr6fs8KhyUQTDdwO2wxJZeevSvA9AZ8xTkVkC5ty0wTKaCNY7n5qcYHZTtdAdxEQER2KDDUIZIVzZ9urDQ-juMHFQKta1SdLXU');">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-baseline justify-between mb-1">
+                                        <span class="text-xs font-bold text-slate-300">Dian Putri</span>
+                                        <span class="text-[10px] text-slate-600">3 hours ago</span>
+                                    </div>
+                                    <p class="text-sm text-slate-300 leading-snug">Suka banget sama actingnya!</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-white flex items-center gap-1">Reply</button>
+                                        <button
+                                            class="text-xs text-slate-500 hover:text-primary flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">favorite</span> 5
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-[#1c1022] border-t border-white/10 shrink-0">
+                        <div class="relative flex items-center gap-3">
+                            <div class="size-9 rounded-full bg-slate-700 flex-shrink-0 bg-cover border border-white/10"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCTZr0MFEwWo7om_k1WlGTQ4w0_0hNEjENzPa8EmkOaxsIFp4KecU2bRCsyoi3lR3t8GjpaIzCwwCWv9d-DT60HMdf1zgYy2BXBBCWogq68IpKsXKX7wmwjxeDuhn54anDFR_AP-KKpd5Tzxmy8gN5zWtZBYKv9XqZGhodE1RCH9DfIGiv2EfSVrdfbDmyaIYqei5eQom3YVtBzVjDg7ulqN-ht3MX4YqJtC2pJCzQRbCEBxTMo9puwnAxJ4q8CgJyBBvzHnmOP42qt');">
+                            </div>
+                            <div class="flex-1 relative">
+                                <input
+                                    class="w-full bg-surface-dark border border-white/10 rounded-full py-2.5 pl-4 pr-12 text-sm text-white focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 placeholder-slate-500 transition-all"
+                                    placeholder="Add a comment..." type="text" />
+                                <button
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary p-1 rounded-full hover:bg-white/5 transition-colors">
+                                    <span class="material-symbols-outlined text-xl">sentiment_satisfied</span>
+                                </button>
+                            </div>
+                            <button
+                                class="bg-primary/20 hover:bg-primary text-primary hover:text-white p-2.5 rounded-full transition-all flex items-center justify-center">
+                                <span class="material-symbols-outlined text-xl -ml-0.5 mt-0.5">send</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Video Player JavaScript
+        const video = document.getElementById('mainVideo');
+        const videoPoster = document.getElementById('videoPoster');
+        const playButton = document.getElementById('playButton');
+        const playButtonOverlay = document.getElementById('playButtonOverlay');
+        const playIcon = document.getElementById('playIcon');
+        const controlPlayBtn = document.getElementById('controlPlayBtn');
+        const controlPlayIcon = document.getElementById('controlPlayIcon');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const muteBtn = document.getElementById('muteBtn');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const videoContainer = document.getElementById('videoContainer');
+
+        let isPlaying = false;
+
+        // Format time helper
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Toggle play/pause
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                isPlaying = true;
+                videoPoster.style.opacity = '0';
+                video.style.opacity = '1';
+                playIcon.textContent = 'pause';
+                controlPlayIcon.textContent = 'pause';
+                playButtonOverlay.style.opacity = '0';
+                playButtonOverlay.style.pointerEvents = 'none';
+            } else {
+                video.pause();
+                isPlaying = false;
+                playIcon.textContent = 'play_arrow';
+                controlPlayIcon.textContent = 'play_arrow';
+                playButtonOverlay.style.opacity = '1';
+                playButtonOverlay.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Event listeners
+        playButton.addEventListener('click', togglePlay);
+        controlPlayBtn.addEventListener('click', togglePlay);
+
+        // Click on video to toggle play
+        video.addEventListener('click', togglePlay);
+
+        // Update progress bar
+        video.addEventListener('timeupdate', () => {
+            const progress = (video.currentTime / video.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+            timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration || 0)}`;
+        });
+
+        // Seek video
+        progressContainer.addEventListener('click', (e) => {
+            const rect = progressContainer.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            video.currentTime = percent * video.duration;
+        });
+
+        // Volume control
+        muteBtn.addEventListener('click', () => {
+            video.muted = !video.muted;
+            volumeIcon.textContent = video.muted ? 'volume_off' : 'volume_up';
+            volumeSlider.value = video.muted ? 0 : video.volume;
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            video.volume = e.target.value;
+            video.muted = e.target.value == 0;
+            volumeIcon.textContent = e.target.value == 0 ? 'volume_off' : 'volume_up';
+        });
+
+        // Fullscreen
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                videoContainer.requestFullscreen();
+            }
+        });
+
+        // Video ended
+        video.addEventListener('ended', () => {
+            isPlaying = false;
+            playIcon.textContent = 'play_arrow';
+            controlPlayIcon.textContent = 'play_arrow';
+            playButtonOverlay.style.opacity = '1';
+            playButtonOverlay.style.pointerEvents = 'auto';
+            videoPoster.style.opacity = '1';
+            video.style.opacity = '0';
+        });
+
+        // Show controls on hover when playing
+        videoContainer.addEventListener('mouseenter', () => {
+            if (isPlaying) {
+                playButtonOverlay.style.opacity = '1';
+                playButtonOverlay.style.pointerEvents = 'auto';
+            }
+        });
+
+        videoContainer.addEventListener('mouseleave', () => {
+            if (isPlaying) {
+                playButtonOverlay.style.opacity = '0';
+                playButtonOverlay.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
