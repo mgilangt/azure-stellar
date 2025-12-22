@@ -23,6 +23,9 @@ model Content {
   name        String
   price       Int
   description String?       @db.Text
+  type        String        @default("FILE") // FILE | GROUP
+  groupChatId String?       @map("group_chat_id") // Telegram chat_id for group invite
+  inviteLink  String?       @map("invite_link") @db.Text // https://t.me/joinchat/xxx
   createdAt   DateTime      @default(now()) @map("created_at")
   
   files        ContentFile[]

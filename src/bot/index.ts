@@ -2,6 +2,7 @@ import { Bot } from 'grammy'
 import { registerStartCommand } from './commands/start'
 import { registerHelpCommand } from './commands/help'
 import { registerCallbackHandlers } from './handlers/callback'
+import { registerJoinRequestHandler } from './handlers/joinRequest'
 
 export function createBot(): Bot {
     const token = process.env.TELEGRAM_BOT_TOKEN
@@ -19,6 +20,9 @@ export function createBot(): Bot {
     // Register callback handlers
     registerCallbackHandlers(bot)
 
+    // Register join request handler (for GROUP products)
+    registerJoinRequestHandler(bot)
+
     // Error handler
     bot.catch((err) => {
         console.error('Bot error:', err)
@@ -26,3 +30,4 @@ export function createBot(): Bot {
 
     return bot
 }
+

@@ -36,9 +36,11 @@ export function registerStartCommand(bot: Bot) {
         const keyboard = new InlineKeyboard()
 
         for (const content of contents) {
+            // Type badge: 📁 for FILE, 👥 for GROUP
+            const typeBadge = content.type === 'GROUP' ? '👥' : '📁'
             keyboard
                 .text(
-                    `${content.name} - ${formatPrice(content.price)}`,
+                    `${typeBadge} ${content.name} - ${formatPrice(content.price)}`,
                     `buy_${content.id}`
                 )
                 .row()

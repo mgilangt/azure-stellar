@@ -9,6 +9,7 @@ const dummyContents = [
         name: 'Sample Photo Pack',
         price: 25000,
         description: '📸 Koleksi foto sample untuk testing. 3 foto HD.',
+        type: 'FILE',
         files: [
             {
                 name: 'Nature 1.jpg',
@@ -31,6 +32,7 @@ const dummyContents = [
         name: 'Sample Video Pack',
         price: 50000,
         description: '🎬 Koleksi video sample untuk testing. 2 video pendek.',
+        type: 'FILE',
         files: [
             {
                 name: 'Sample Video 1.mp4',
@@ -45,58 +47,22 @@ const dummyContents = [
         ],
     },
     {
-        name: 'Mixed Bundle',
-        price: 75000,
-        description: '📦 Bundle campuran foto dan video untuk testing.',
-        files: [
-            {
-                name: 'City Photo.jpg',
-                mediaUrl: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1280',
-                fileType: 'photo'
-            },
-            {
-                name: 'Beach Photo.jpg',
-                mediaUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1280',
-                fileType: 'photo'
-            },
-            {
-                name: 'Sample Video.mp4',
-                mediaUrl: 'https://sample-videos.com/video321/mp4/480/big_buck_bunny_480p_1mb.mp4',
-                fileType: 'video'
-            },
-        ],
+        name: 'Premium Group Access',
+        price: 150000,
+        description: '👥 Akses ke grup premium dengan konten eksklusif. Lifetime access!',
+        type: 'GROUP',
+        // Ganti dengan chat_id grup kamu (contoh: -1001234567890)
+        // Atau masukkan invite link statis
+        inviteLink: 'https://t.me/+exampleinvitelink', // Ganti dengan link asli
+        files: [], // Tidak ada files untuk GROUP type
     },
     {
-        name: 'Premium Photo Set',
-        price: 100000,
-        description: '✨ Set foto premium untuk testing. 5 foto berkualitas tinggi.',
-        files: [
-            {
-                name: 'Mountain.jpg',
-                mediaUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1280',
-                fileType: 'photo'
-            },
-            {
-                name: 'Ocean.jpg',
-                mediaUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1280',
-                fileType: 'photo'
-            },
-            {
-                name: 'Forest.jpg',
-                mediaUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1280',
-                fileType: 'photo'
-            },
-            {
-                name: 'Desert.jpg',
-                mediaUrl: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1280',
-                fileType: 'photo'
-            },
-            {
-                name: 'Waterfall.jpg',
-                mediaUrl: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1280',
-                fileType: 'photo'
-            },
-        ],
+        name: 'VIP Channel Membership',
+        price: 250000,
+        description: '⭐ Membership VIP channel dengan update harian. Lifetime access!',
+        type: 'GROUP',
+        inviteLink: 'https://t.me/+exampleviplink', // Ganti dengan link asli
+        files: [],
     },
 ]
 
@@ -125,6 +91,8 @@ async function main() {
                 name: contentData.name,
                 price: contentData.price,
                 description: contentData.description,
+                type: contentData.type,
+                inviteLink: 'inviteLink' in contentData ? contentData.inviteLink : null,
                 files: {
                     create: contentData.files,
                 },
@@ -134,9 +102,13 @@ async function main() {
             },
         })
 
-        console.log(`✅ ${content.name}`)
+        const typeBadge = contentData.type === 'GROUP' ? '👥' : '📁'
+        console.log(`✅ ${typeBadge} ${content.name}`)
         console.log(`   💰 Rp ${content.price.toLocaleString('id-ID')}`)
-        console.log(`   📁 ${content.files.length} files`)
+        console.log(`   📦 Type: ${contentData.type}`)
+        if (contentData.type === 'FILE') {
+            console.log(`   📁 ${content.files.length} files`)
+        }
         console.log('')
     }
 
