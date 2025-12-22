@@ -70,23 +70,35 @@ async function deliverFiles(
             { parse_mode: 'Markdown' }
         )
 
-        // Send each file based on its type
+        // Send each file based on its type (protected from forward/save)
         for (const file of contentWithUrls.files) {
             const caption = `📁 ${file.name}`
 
             switch (file.fileType) {
                 case 'photo':
-                    await bot.api.sendPhoto(chatId, file.signedUrl, { caption })
+                    await bot.api.sendPhoto(chatId, file.signedUrl, {
+                        caption,
+                        protect_content: true  // Block forward & save
+                    })
                     break
                 case 'video':
-                    await bot.api.sendVideo(chatId, file.signedUrl, { caption })
+                    await bot.api.sendVideo(chatId, file.signedUrl, {
+                        caption,
+                        protect_content: true
+                    })
                     break
                 case 'audio':
-                    await bot.api.sendAudio(chatId, file.signedUrl, { caption })
+                    await bot.api.sendAudio(chatId, file.signedUrl, {
+                        caption,
+                        protect_content: true
+                    })
                     break
                 case 'document':
                 default:
-                    await bot.api.sendDocument(chatId, file.signedUrl, { caption })
+                    await bot.api.sendDocument(chatId, file.signedUrl, {
+                        caption,
+                        protect_content: true
+                    })
                     break
             }
 
