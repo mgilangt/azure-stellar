@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc && npm run copy-views",
-    "copy-views": "xcopy src\\view dist\\view /E /I /Y",
+    "copy-views": "copyfiles -u 1 \"src/view/**/*\" dist",
     "start": "node dist/index.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
@@ -31,6 +31,7 @@
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/qrcode": "^1.5.6",
+    "copyfiles": "^2.4.1",
     "prisma": "^6.1.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
