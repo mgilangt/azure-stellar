@@ -76,7 +76,7 @@ export function createWebhookRoutes(bot: Bot) {
                 // Deliver content to user
                 await deliverContent(
                     bot,
-                    transaction.user.idTele,
+                    transaction.user.idTele!,
                     transaction.contentId
                 )
 
@@ -91,7 +91,7 @@ export function createWebhookRoutes(bot: Bot) {
 
                 // Notify user
                 await bot.api.sendMessage(
-                    transaction.user.idTele,
+                    transaction.user.idTele!,
                     '⏰ Invoice pembayaran kamu sudah expired.\n\n' +
                     'Ketik /start untuk membuat pesanan baru.'
                 )
@@ -160,7 +160,7 @@ export function createWebhookRoutes(bot: Bot) {
                         // Deliver content to user
                         await deliverContent(
                             bot,
-                            trxById.user.idTele,
+                            trxById.user.idTele!,
                             trxById.contentId
                         )
 
@@ -187,7 +187,7 @@ export function createWebhookRoutes(bot: Bot) {
                 // Deliver content to user
                 await deliverContent(
                     bot,
-                    transaction.user.idTele,
+                    transaction.user.idTele!,
                     transaction.contentId
                 )
 

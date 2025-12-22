@@ -177,7 +177,7 @@ async function main() {
                     console.log(`Payment confirmed for transaction ${transaction.id}`)
 
                     // Deliver content
-                    await deliverContent(bot, transaction.user.idTele, transaction.contentId)
+                    await deliverContent(bot, transaction.user.idTele!, transaction.contentId)
 
                     return c.html(`<html><body style="font-family:sans-serif;text-align:center;padding:50px;background:#f0f0f0">
                         <div style="background:white;padding:40px;border-radius:16px;max-width:400px;margin:0 auto">

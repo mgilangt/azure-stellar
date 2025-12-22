@@ -58,8 +58,8 @@ export function createAdminRoutes() {
 
     // Verify token
     admin.get('/verify', authMiddleware, (c) => {
-        const admin = c.get('admin')
-        return c.json({ valid: true, admin })
+        const adminData = (c as any).get('admin')
+        return c.json({ valid: true, admin: adminData })
     })
 
     // ============ STATS ROUTE ============
