@@ -61,14 +61,25 @@ export function registerJoinRequestHandler(bot: Bot) {
 
                 console.log(`✅ Approved join request for ${userName} - paid transaction found`)
 
-                // Notify user in private chat
+                // Notify user in private chat with button to open group
                 try {
+                    // Get group invite link for the button
+                    const groupLink = paidTransaction.content.inviteLink ||
+                        `https://t.me/c/${String(chatId).replace('-100', '')}`
+
                     await bot.api.sendMessage(
                         userId,
                         `✅ *Selamat bergabung!*\n\n` +
                         `Request kamu untuk join *${paidTransaction.content.name}* telah disetujui.\n\n` +
-                        `Selamat menikmati konten eksklusif! 🎉`,
-                        { parse_mode: 'Markdown' }
+                        `Klik tombol di bawah untuk masuk ke grup! 🎉`,
+                        {
+                            parse_mode: 'Markdown',
+                            reply_markup: {
+                                inline_keyboard: [[
+                                    { text: '👥 Buka Grup', url: groupLink }
+                                ]]
+                            }
+                        }
                     )
                 } catch (e) {
                     // User might have blocked the bot
