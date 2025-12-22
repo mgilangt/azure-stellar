@@ -21,7 +21,7 @@ export async function getContentById(id: number) {
 }
 
 /**
- * Get content files with signed URLs
+ * Get content files with URLs (supports both public URLs and DO Spaces paths)
  */
 export async function getContentFilesWithUrls(contentId: number) {
     const content = await prisma.content.findUnique({
@@ -31,12 +31,19 @@ export async function getContentFilesWithUrls(contentId: number) {
 
     if (!content) return null
 
-    // Generate signed URLs for each file
+    // Generate URLs for each file
     const filesWithUrls = await Promise.all(
         content.files.map(async (file) => {
-            // Extract key from the media URL
-            // mediaUrl format: "folder/filename.mp4" (relative path in bucket)
-            const signedUrl = await getSignedFileUrl(file.mediaUrl)
+            let signedUrl: string
+
+            // Check if mediaUrl is already a full URL (http/https)
+            if (file.mediaUrl.startsWith('http://') || file.mediaUrl.startsWith('https://')) {
+                // Use the URL directly
+                signedUrl = file.mediaUrl
+            } else {
+                // Generate signed URL from DO Spaces
+                signedUrl = await getSignedFileUrl(file.mediaUrl)
+            }
 
             return {
                 ...file,

@@ -2,74 +2,100 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-// Dummy data - konten digital netral
+// Dummy data dengan URL public (untuk testing)
+// Menggunakan sample files dari internet yang bisa diakses langsung
 const dummyContents = [
     {
-        name: 'Paket Desain Logo',
-        price: 150000,
-        description: '🎨 50 template logo premium format AI & PNG. Cocok untuk brand & bisnis.',
+        name: 'Sample Photo Pack',
+        price: 25000,
+        description: '📸 Koleksi foto sample untuk testing. 3 foto HD.',
         files: [
-            { name: 'Logo Pack - Minimalist.zip', mediaUrl: 'logo/minimalist.zip', fileType: 'document' },
-            { name: 'Logo Pack - Vintage.zip', mediaUrl: 'logo/vintage.zip', fileType: 'document' },
-            { name: 'Logo Pack - Modern.zip', mediaUrl: 'logo/modern.zip', fileType: 'document' },
-            { name: 'Preview 1.jpg', mediaUrl: 'logo/preview-1.jpg', fileType: 'photo' },
-            { name: 'Preview 2.jpg', mediaUrl: 'logo/preview-2.jpg', fileType: 'photo' },
+            {
+                name: 'Nature 1.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Nature 2.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Nature 3.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=1280',
+                fileType: 'photo'
+            },
         ],
     },
     {
-        name: 'Video Tutorial Editing',
-        price: 75000,
-        description: '🎬 Tutorial lengkap editing video dengan Premiere Pro. 5 video HD.',
-        files: [
-            { name: '01 - Pengenalan Premiere.mp4', mediaUrl: 'editing/01-intro.mp4', fileType: 'video' },
-            { name: '02 - Cut dan Transition.mp4', mediaUrl: 'editing/02-cut.mp4', fileType: 'video' },
-            { name: '03 - Color Grading.mp4', mediaUrl: 'editing/03-color.mp4', fileType: 'video' },
-            { name: '04 - Audio Editing.mp4', mediaUrl: 'editing/04-audio.mp4', fileType: 'video' },
-            { name: '05 - Export Settings.mp4', mediaUrl: 'editing/05-export.mp4', fileType: 'video' },
-        ],
-    },
-    {
-        name: 'Preset Lightroom Mobile',
-        price: 35000,
-        description: '📸 20 preset Lightroom untuk foto feed Instagram. Support mobile & desktop.',
-        files: [
-            { name: 'Preset - Warm Tone.dng', mediaUrl: 'preset/warm-tone.dng', fileType: 'document' },
-            { name: 'Preset - Cool Tone.dng', mediaUrl: 'preset/cool-tone.dng', fileType: 'document' },
-            { name: 'Preset - Vintage.dng', mediaUrl: 'preset/vintage.dng', fileType: 'document' },
-            { name: 'Preset - Moody.dng', mediaUrl: 'preset/moody.dng', fileType: 'document' },
-            { name: 'Preset - Bright.dng', mediaUrl: 'preset/bright.dng', fileType: 'document' },
-            { name: 'Tutorial Install.mp4', mediaUrl: 'preset/tutorial.mp4', fileType: 'video' },
-            { name: 'Before After.jpg', mediaUrl: 'preset/before-after.jpg', fileType: 'photo' },
-        ],
-    },
-    {
-        name: 'Stock Footage Nature',
+        name: 'Sample Video Pack',
         price: 50000,
-        description: '🌿 10 video stock footage alam Indonesia 4K. Bebas royalty.',
+        description: '🎬 Koleksi video sample untuk testing. 2 video pendek.',
         files: [
-            { name: 'Sunrise Mountain.mp4', mediaUrl: 'nature/sunrise.mp4', fileType: 'video' },
-            { name: 'Waterfall.mp4', mediaUrl: 'nature/waterfall.mp4', fileType: 'video' },
-            { name: 'Rice Field.mp4', mediaUrl: 'nature/rice-field.mp4', fileType: 'video' },
-            { name: 'Beach Waves.mp4', mediaUrl: 'nature/beach.mp4', fileType: 'video' },
-            { name: 'Forest Walk.mp4', mediaUrl: 'nature/forest.mp4', fileType: 'video' },
-            { name: 'Sunset Timelapse.mp4', mediaUrl: 'nature/sunset.mp4', fileType: 'video' },
-            { name: 'Rain Ambience.mp4', mediaUrl: 'nature/rain.mp4', fileType: 'video' },
-            { name: 'Cloud Timelapse.mp4', mediaUrl: 'nature/cloud.mp4', fileType: 'video' },
-            { name: 'River Stream.mp4', mediaUrl: 'nature/river.mp4', fileType: 'video' },
-            { name: 'Birds Flying.mp4', mediaUrl: 'nature/birds.mp4', fileType: 'video' },
+            {
+                name: 'Sample Video 1.mp4',
+                mediaUrl: 'https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4',
+                fileType: 'video'
+            },
+            {
+                name: 'Sample Video 2.mp4',
+                mediaUrl: 'https://sample-videos.com/video321/mp4/720/big_buck_bunny_720p_2mb.mp4',
+                fileType: 'video'
+            },
         ],
     },
     {
-        name: 'Bundle Desain Sosmed',
-        price: 100000,
-        description: '📱 Template Canva untuk Instagram, TikTok, YouTube. 100+ template.',
+        name: 'Mixed Bundle',
+        price: 75000,
+        description: '📦 Bundle campuran foto dan video untuk testing.',
         files: [
-            { name: 'Instagram Story.zip', mediaUrl: 'sosmed/ig-story.zip', fileType: 'document' },
-            { name: 'Instagram Feed.zip', mediaUrl: 'sosmed/ig-feed.zip', fileType: 'document' },
-            { name: 'TikTok Thumbnail.zip', mediaUrl: 'sosmed/tiktok.zip', fileType: 'document' },
-            { name: 'YouTube Thumbnail.zip', mediaUrl: 'sosmed/youtube.zip', fileType: 'document' },
-            { name: 'Tutorial Canva.mp4', mediaUrl: 'sosmed/tutorial.mp4', fileType: 'video' },
-            { name: 'Preview All.jpg', mediaUrl: 'sosmed/preview.jpg', fileType: 'photo' },
+            {
+                name: 'City Photo.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Beach Photo.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Sample Video.mp4',
+                mediaUrl: 'https://sample-videos.com/video321/mp4/480/big_buck_bunny_480p_1mb.mp4',
+                fileType: 'video'
+            },
+        ],
+    },
+    {
+        name: 'Premium Photo Set',
+        price: 100000,
+        description: '✨ Set foto premium untuk testing. 5 foto berkualitas tinggi.',
+        files: [
+            {
+                name: 'Mountain.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Ocean.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Forest.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Desert.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1280',
+                fileType: 'photo'
+            },
+            {
+                name: 'Waterfall.jpg',
+                mediaUrl: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=1280',
+                fileType: 'photo'
+            },
         ],
     },
 ]
@@ -117,6 +143,9 @@ async function main() {
     console.log('─'.repeat(50))
     console.log('🎉 Seeding completed!')
     console.log(`📦 Total: ${dummyContents.length} products`)
+    console.log('')
+    console.log('💡 Files menggunakan URL public (Unsplash & sample-videos.com)')
+    console.log('   Bot akan langsung kirim dari URL tersebut.')
 }
 
 main()
