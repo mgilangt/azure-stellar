@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 import { Bot } from 'grammy'
-import { prisma } from '../lib/prisma.js'
-import { verifyWebhookToken } from '../services/xendit.js'
-import { deliverContent } from '../services/delivery.js'
+import { prisma } from '../lib/prisma'
+import { verifyWebhookToken } from '../services/xendit'
+import { deliverContent } from '../services/delivery'
 
 interface XenditWebhookPayload {
     id: string

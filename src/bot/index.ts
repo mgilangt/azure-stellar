@@ -1,7 +1,7 @@
 import { Bot } from 'grammy'
-import { registerStartCommand } from './commands/start.js'
-import { registerHelpCommand } from './commands/help.js'
-import { registerCallbackHandlers } from './handlers/callback.js'
+import { registerStartCommand } from './commands/start'
+import { registerHelpCommand } from './commands/help'
+import { registerCallbackHandlers } from './handlers/callback'
 
 export function createBot(): Bot {
     const token = process.env.TELEGRAM_BOT_TOKEN

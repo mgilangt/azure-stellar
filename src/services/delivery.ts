@@ -1,5 +1,5 @@
 import { Bot, InputFile } from 'grammy'
-import { getContentFilesWithUrls } from './product.js'
+import { getContentFilesWithUrls } from './product'
 
 /**
  * Deliver digital content to user after successful payment

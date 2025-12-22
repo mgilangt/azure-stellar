@@ -1,6 +1,6 @@
 import { Bot, Context, InlineKeyboard } from 'grammy'
-import { prisma } from '../lib/prisma.js'
-import { getAllContents, formatPrice } from '../services/product.js'
+import { prisma } from '../lib/prisma'
+import { getAllContents, formatPrice } from '../services/product'
 
 export function registerStartCommand(bot: Bot) {
     bot.command('start', async (ctx: Context) => {

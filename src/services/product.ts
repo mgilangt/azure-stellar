@@ -1,5 +1,5 @@
-import { prisma } from '../lib/prisma.js'
-import { getSignedFileUrl } from '../lib/spaces.js'
+import { prisma } from '../lib/prisma'
+import { getSignedFileUrl } from '../lib/spaces'
 
 /**
  * Get all available contents/products
