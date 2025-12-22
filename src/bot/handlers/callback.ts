@@ -111,6 +111,7 @@ export function registerCallbackHandlers(bot: Bot) {
             // Create Xendit invoice
             const invoice = await createInvoice({
                 externalId: `TRX-${transaction.id}-${Date.now()}`,
+                transactionId: transaction.id,
                 amount: content.price,
                 description: `Pembelian: ${content.name}`,
                 customerName: ctx.from.first_name,

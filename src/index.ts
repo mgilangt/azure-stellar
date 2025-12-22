@@ -5,6 +5,9 @@ import { logger } from 'hono/logger'
 import { cors } from 'hono/cors'
 import { createBot } from './bot'
 import { createWebhookRoutes } from './routes/webhook'
+import { prisma } from './lib/prisma'
+import { getInvoice } from './services/xendit'
+import { deliverContent } from './services/delivery'
 
 async function main() {
     // Initialize Hono app
@@ -81,6 +84,72 @@ async function main() {
             </body>
             </html>
         `)
+    })
+
+    // Payment callback - handles redirect from Xendit with query params
+    app.get('/payment/callback', async (c) => {
+        const transactionId = c.req.query('transaction_id')
+        const status = c.req.query('status')
+
+        console.log(`Payment callback: transaction_id=${transactionId}, status=${status}`)
+
+        if (!transactionId) {
+            return c.html(`<html><body style="font-family:sans-serif;text-align:center;padding:50px">
+                <h1>❌ Error</h1><p>Transaction ID tidak ditemukan.</p></body></html>`)
+        }
+
+        try {
+            const transaction = await prisma.transaction.findUnique({
+                where: { id: parseInt(transactionId) },
+                include: { user: true, content: true },
+            })
+
+            if (!transaction) {
+                return c.html(`<html><body style="font-family:sans-serif;text-align:center;padding:50px">
+                    <h1>❌ Transaksi Tidak Ditemukan</h1></body></html>`)
+            }
+
+            // If already processed
+            if (transaction.status === 'PAID') {
+                return c.html(`<html><body style="font-family:sans-serif;text-align:center;padding:50px;background:#f0f0f0">
+                    <div style="background:white;padding:40px;border-radius:16px;max-width:400px;margin:0 auto">
+                    <h1 style="color:#22c55e">✅ Pembayaran Berhasil!</h1>
+                    <p>Produk sudah dikirim ke Telegram.</p></div></body></html>`)
+            }
+
+            // Verify with Xendit API
+            if (transaction.xenditInvoiceId && status === 'success') {
+                const invoice = await getInvoice(transaction.xenditInvoiceId)
+
+                if (invoice.status === 'PAID') {
+                    await prisma.transaction.update({
+                        where: { id: transaction.id },
+                        data: { status: 'PAID', paidAt: new Date() },
+                    })
+
+                    console.log(`Payment confirmed for transaction ${transaction.id}`)
+
+                    // Deliver content
+                    await deliverContent(bot, transaction.user.idTele, transaction.contentId)
+
+                    return c.html(`<html><body style="font-family:sans-serif;text-align:center;padding:50px;background:#f0f0f0">
+                        <div style="background:white;padding:40px;border-radius:16px;max-width:400px;margin:0 auto">
+                        <h1 style="color:#22c55e">✅ Pembayaran Berhasil!</h1>
+                        <p>Produk digital telah dikirim ke Telegram Anda.</p>
+                        <p><strong>Silakan kembali ke Telegram.</strong></p></div></body></html>`)
+                }
+            }
+
+            // Payment pending
+            return c.html(`<html><body style="font-family:sans-serif;text-align:center;padding:50px;background:#f0f0f0">
+                <div style="background:white;padding:40px;border-radius:16px;max-width:400px;margin:0 auto">
+                <h1 style="color:#f59e0b">⏳ Pembayaran Pending</h1>
+                <p>Status belum terkonfirmasi. Tunggu beberapa saat.</p></div></body></html>`)
+        } catch (error) {
+            console.error('Payment callback error:', error)
+            return c.html(`<html><body style="font-family:sans-serif;text-align:center;padding:50px">
+                <h1>❌ Terjadi Kesalahan</h1><p>Hubungi admin.</p></body></html>`)
+        }
     })
 
     // Start bot (long polling)

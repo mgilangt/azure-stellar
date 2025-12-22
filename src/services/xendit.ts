@@ -8,6 +8,7 @@ const { Invoice } = xenditClient
 
 interface CreateInvoiceParams {
     externalId: string
+    transactionId: number  // For tracking in redirect URL
     amount: number
     description: string
     payerEmail?: string
@@ -28,6 +29,8 @@ interface InvoiceResponse {
 export async function createInvoice(params: CreateInvoiceParams): Promise<InvoiceResponse> {
     const invoiceService = new Invoice({})
 
+    const baseUrl = process.env.WEBHOOK_URL || ''
+
     const invoice = await invoiceService.createInvoice({
         externalID: params.externalId,
         amount: params.amount,
@@ -39,8 +42,8 @@ export async function createInvoice(params: CreateInvoiceParams): Promise<Invoic
         paymentMethods: ['QRIS'],
         invoiceDuration: 86400,
         currency: 'IDR',
-        successRedirectURL: process.env.WEBHOOK_URL + '/success',
-        failureRedirectURL: process.env.WEBHOOK_URL + '/failed',
+        successRedirectURL: `${baseUrl}/payment/callback?transaction_id=${params.transactionId}&status=success`,
+        failureRedirectURL: `${baseUrl}/payment/callback?transaction_id=${params.transactionId}&status=failed`,
     }) as Record<string, unknown>
 
     return {
