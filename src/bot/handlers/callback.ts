@@ -1,7 +1,7 @@
 import { Bot, Context, InlineKeyboard, InputFile } from 'grammy'
 import { prisma } from '../../lib/prisma'
 import { getContentById, formatPrice } from '../../services/product'
-import { createQRIS, generateQRImage } from '../../services/xendit'
+import { createQRIS, generateQRImage, createInvoice } from '../../services/xendit'
 
 export function registerCallbackHandlers(bot: Bot) {
     // Handle product selection (buy_<id>)
@@ -110,16 +110,26 @@ export function registerCallbackHandlers(bot: Bot) {
 
             // Create Xendit QRIS
             const qris = await createQRIS({
-                externalId: `TRX-${transaction.id}-${Date.now()}`,
+                externalId: `QRIS-${transaction.id}-${Date.now()}`,
                 amount: content.price,
                 description: `Pembelian: ${content.name}`,
             })
 
-            // Update transaction with QRIS details
+            // Create Xendit Invoice (for URL button)
+            const invoice = await createInvoice({
+                externalId: `TRX-${transaction.id}-${Date.now()}`,
+                transactionId: transaction.id,
+                amount: content.price,
+                description: `Pembelian: ${content.name}`,
+                customerName: ctx.from.first_name,
+            })
+
+            // Update transaction with payment details
             await prisma.transaction.update({
                 where: { id: transaction.id },
                 data: {
-                    xenditInvoiceId: qris.id,
+                    xenditInvoiceId: invoice.id,
+                    paymentUrl: invoice.invoice_url,
                 },
             })
 
@@ -129,16 +139,18 @@ export function registerCallbackHandlers(bot: Bot) {
             // Delete the previous message
             await ctx.deleteMessage()
 
-            // Send QR code image to user
+            // Send QR code image to user with button
             await ctx.replyWithPhoto(new InputFile(qrBuffer, 'qris.png'), {
                 caption: `🧾 *QRIS Pembayaran*\n\n` +
                     `Produk: *${content.name}*\n` +
                     `Total: *${formatPrice(content.price)}*\n\n` +
-                    `📱 Scan QR code di atas dengan aplikasi e-wallet atau mobile banking.\n\n` +
+                    `📱 Scan QR code di atas atau klik tombol untuk membuka halaman pembayaran.\n\n` +
                     `⏰ Berlaku 24 jam.\n` +
                     `_Setelah pembayaran berhasil, produk akan dikirim otomatis._`,
                 parse_mode: 'Markdown',
                 reply_markup: new InlineKeyboard()
+                    .url('💳 Buka Halaman Pembayaran', invoice.invoice_url)
+                    .row()
                     .text('❌ Batalkan', `cancel_${transaction.id}`),
             })
         } catch (error) {
