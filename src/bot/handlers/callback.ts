@@ -1,7 +1,7 @@
 import { Bot, Context, InlineKeyboard } from 'grammy'
-import { prisma } from '../lib/prisma'
-import { getContentById, formatPrice } from '../services/product'
-import { createInvoice } from '../services/xendit'
+import { prisma } from '../../lib/prisma'
+import { getContentById, formatPrice } from '../../services/product'
+import { createInvoice } from '../../services/xendit'
 
 export function registerCallbackHandlers(bot: Bot) {
     // Handle product selection (buy_<id>)
