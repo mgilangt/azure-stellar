@@ -17,6 +17,31 @@ export function registerJoinRequestHandler(bot: Bot) {
         console.log(`Join request from ${userName} (${userId}) for chat ${chatId}`)
 
         try {
+            // Debug: Check what contents exist with this groupChatId
+            const matchingContent = await prisma.content.findFirst({
+                where: { groupChatId: String(chatId) }
+            })
+            console.log(`🔍 Content with groupChatId ${chatId}:`, matchingContent?.name || 'NOT FOUND')
+
+            // Debug: Check if user exists
+            const user = await prisma.user.findFirst({
+                where: { idTele: String(userId) }
+            })
+            console.log(`🔍 User ${userId}:`, user?.nama || 'NOT FOUND')
+
+            // Debug: Check all PAID transactions for this user
+            const userTransactions = await prisma.transaction.findMany({
+                where: {
+                    user: { idTele: String(userId) },
+                    status: 'PAID'
+                },
+                include: { content: true }
+            })
+            console.log(`🔍 User's PAID transactions:`, userTransactions.map(t => ({
+                contentName: t.content.name,
+                groupChatId: t.content.groupChatId
+            })))
+
             // Find if user has paid for this specific group
             const paidTransaction = await prisma.transaction.findFirst({
                 where: {
