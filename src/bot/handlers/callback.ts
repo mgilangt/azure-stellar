@@ -59,9 +59,9 @@ export function registerCallbackHandlers(bot: Bot) {
         }
 
         await ctx.editMessageText(
-            '👋 *Selamat datang di Toko Digital!*\n\n' +
-            '📦 Pilih produk yang ingin kamu beli:\n\n' +
-            '_Klik tombol di bawah untuk melihat detail dan membeli_',
+            '👋 *Selamat datang di Miniseri "Bukan Drama Korea, Ini Drama Tetangga!"*\n\n' +
+            '📦 Pilih Drama Tetangga yang ingin kamu beli eh nonton:\n\n' +
+            '_Klik tombol di bawah untuk melihat detail dan nonton_',
             {
                 parse_mode: 'Markdown',
                 reply_markup: keyboard,

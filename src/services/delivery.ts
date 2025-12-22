@@ -139,16 +139,20 @@ async function deliverGroupAccess(
             return false
         }
 
-        // Send success message with invite link
+        // Send success message with invite button
         await bot.api.sendMessage(
             chatId,
             `✅ *Pembayaran Berhasil!*\n\n` +
             `Terima kasih telah membeli akses *${content.name}*.\n\n` +
-            `🔗 Klik link di bawah untuk bergabung:\n` +
-            `${inviteLink}\n\n` +
-            `⚠️ Link ini hanya bisa digunakan sekali.\n` +
-            `Ketik /start untuk melihat produk lainnya.`,
-            { parse_mode: 'Markdown' }
+            `Klik tombol di bawah untuk bergabung ke grup eksklusif! 🎉`,
+            {
+                parse_mode: 'Markdown',
+                reply_markup: {
+                    inline_keyboard: [[
+                        { text: '👥 Join Group', url: inviteLink }
+                    ]]
+                }
+            }
         )
 
         return true

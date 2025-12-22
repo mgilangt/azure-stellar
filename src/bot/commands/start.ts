@@ -27,7 +27,7 @@ export function registerStartCommand(bot: Bot) {
         if (contents.length === 0) {
             await ctx.reply(
                 '👋 Selamat datang!\n\n' +
-                'Maaf, saat ini belum ada produk tersedia.'
+                'Maaf, saat ini belum ada film nya bray wkwkwkwk.'
             )
             return
         }
@@ -47,9 +47,9 @@ export function registerStartCommand(bot: Bot) {
         }
 
         await ctx.reply(
-            '👋 *Selamat datang di Toko Digital!*\n\n' +
-            '📦 Pilih produk yang ingin kamu beli:\n\n' +
-            '_Klik tombol di bawah untuk melihat detail dan membeli_',
+            '👋 *Selamat datang di Miniseri "Bukan Drama Korea, Ini Drama Tetangga!"*\n\n' +
+            '📦 Pilih Drama Tetangga yang ingin kamu beli eh nonton:\n\n' +
+            '_Klik tombol di bawah untuk melihat detail dan nonton_',
             {
                 parse_mode: 'Markdown',
                 reply_markup: keyboard,
