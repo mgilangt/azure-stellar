@@ -9,8 +9,11 @@ datasource db {
 
 model User {
   id        Int           @id @default(autoincrement())
-  idTele    String        @unique @map("id_tele")
+  idTele    String?       @unique @map("id_tele") // Optional for admin users
   nama      String
+  email     String?       @unique // For admin login
+  password  String?       // Hashed password for admin login
+  userType  String        @default("CONSUMER") @map("user_type") // CONSUMER | ADMIN
   createdAt DateTime      @default(now()) @map("created_at")
   
   transactions Transaction[]

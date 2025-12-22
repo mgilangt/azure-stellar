@@ -118,6 +118,44 @@ async function main() {
     console.log('')
     console.log('💡 Files menggunakan URL public (Unsplash & sample-videos.com)')
     console.log('   Bot akan langsung kirim dari URL tersebut.')
+    console.log('')
+
+    // Create admin user
+    console.log('👤 Creating admin user...')
+
+    const bcrypt = await import('bcryptjs')
+    const hashedPassword = await bcrypt.hash('admin123', 10)
+
+    const existingAdmin = await prisma.user.findFirst({
+        where: { email: 'admin@miniseri.com' }
+    })
+
+    if (existingAdmin) {
+        await prisma.user.update({
+            where: { id: existingAdmin.id },
+            data: {
+                password: hashedPassword,
+                userType: 'ADMIN'
+            }
+        })
+        console.log('✅ Admin user updated')
+    } else {
+        await prisma.user.create({
+            data: {
+                nama: 'Administrator',
+                email: 'admin@miniseri.com',
+                password: hashedPassword,
+                userType: 'ADMIN'
+            }
+        })
+        console.log('✅ Admin user created')
+    }
+
+    console.log('')
+    console.log('🔐 Admin Credentials:')
+    console.log('   Email: admin@miniseri.com')
+    console.log('   Password: admin123')
+    console.log('')
 }
 
 main()

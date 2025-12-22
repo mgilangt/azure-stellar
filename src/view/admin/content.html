@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Kelola Content - Admin Miniseri</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: #0d0a10;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            background: linear-gradient(180deg, #1a0f1f 0%, #0d0a10 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px;
+            margin-bottom: 32px;
+        }
+
+        .sidebar-logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
+        .sidebar-logo h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sidebar-logo span {
+            font-size: 11px;
+            color: #64748b;
+            display: block;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(238, 29, 147, 0.15) 0%, rgba(238, 39, 46, 0.15) 100%);
+            color: #EE1D93;
+        }
+
+        .nav-item .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #EE1D93 0%, #EE272E 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(238, 29, 147, 0.4);
+        }
+
+        /* Search */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(45, 27, 54, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            max-width: 400px;
+        }
+
+        .search-bar .material-symbols-outlined {
+            color: #64748b;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: #64748b;
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(45, 27, 54, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-file {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .badge-group {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .btn-icon.delete:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-icon .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a0f1f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #EE1D93;
+            box-shadow: 0 0 0 3px rgba(238, 29, 147, 0.15);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .form-select option {
+            background: #1a0f1f;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-submit {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #EE1D93 0%, #EE272E 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 4px 16px rgba(238, 29, 147, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state .material-symbols-outlined {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h4 {
+            font-size: 18px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(238, 29, 147, 0.2);
+            border-top-color: #EE1D93;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Miniseri">
+            <div>
+                <h1>Miniseri</h1>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+
+        <nav>
+            <div class="nav-section">
+                <div class="nav-section-title">Menu</div>
+                <a href="/admin/dashboard" class="nav-item">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="/admin/content" class="nav-item active">
+                    <span class="material-symbols-outlined">movie</span>
+                    Kelola Content
+                </a>
+                <a href="/admin/files" class="nav-item">
+                    <span class="material-symbols-outlined">folder</span>
+                    Kelola File
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                Keluar
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h2>Kelola Content</h2>
+            <button class="btn-primary" onclick="openModal()">
+                <span class="material-symbols-outlined">add</span>
+                Tambah Content
+            </button>
+        </div>
+
+        <div class="search-bar">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="searchInput" placeholder="Cari content..." oninput="filterContents()">
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Harga</th>
+                        <th>Tipe</th>
+                        <th>File</th>
+                        <th>Transaksi</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="contentTable">
+                    <tr>
+                        <td colspan="7">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Tambah Content</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="contentForm" onsubmit="saveContent(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="contentId">
+
+                    <div class="form-group">
+                        <label for="name">Nama Content *</label>
+                        <input type="text" id="name" class="form-input" placeholder="Masukkan nama content" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="price">Harga (Rp) *</label>
+                            <input type="number" id="price" class="form-input" placeholder="10000" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Tipe</label>
+                            <select id="type" class="form-select">
+                                <option value="FILE">File</option>
+                                <option value="GROUP">Group</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Deskripsi</label>
+                        <textarea id="description" class="form-textarea"
+                            placeholder="Deskripsi content (opsional)"></textarea>
+                    </div>
+
+                    <div class="form-group" id="groupFields" style="display: none;">
+                        <label for="groupChatId">Group Chat ID</label>
+                        <input type="text" id="groupChatId" class="form-input" placeholder="Chat ID Telegram Group">
+                    </div>
+
+                    <div class="form-group" id="inviteLinkField" style="display: none;">
+                        <label for="inviteLink">Invite Link</label>
+                        <input type="text" id="inviteLink" class="form-input" placeholder="https://t.me/joinchat/xxx">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn-submit" id="submitBtn">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Hapus Content</h3>
+                <button class="modal-close" onclick="closeDeleteModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Apakah Anda yakin ingin menghapus content "<span id="deleteContentName"></span>"?
+                    Semua file yang terkait juga akan dihapus.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Batal</button>
+                <button type="button" class="btn-submit" style="background: #ef4444;"
+                    onclick="confirmDelete()">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('adminToken');
+        let contents = [];
+        let deleteId = null;
+
+        // Check auth
+        if (!token) {
+            window.location.href = '/admin/login';
+        }
+
+        // Type change handler
+        document.getElementById('type').addEventListener('change', function () {
+            const isGroup = this.value === 'GROUP';
+            document.getElementById('groupFields').style.display = isGroup ? 'block' : 'none';
+            document.getElementById('inviteLinkField').style.display = isGroup ? 'block' : 'none';
+        });
+
+        // Load contents
+        async function loadContents() {
+            try {
+                const response = await fetch('/api/admin/contents', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = '/admin/login';
+                    return;
+                }
+
+                contents = await response.json();
+                renderContents(contents);
+            } catch (error) {
+                console.error('Error loading contents:', error);
+                document.getElementById('contentTable').innerHTML = `
+                    <tr><td colspan="7" class="empty-state">
+                        <span class="material-symbols-outlined">error</span>
+                        <h4>Gagal memuat data</h4>
+                        <p><a href="javascript:loadContents()" style="color: #EE1D93;">Coba lagi</a></p>
+                    </td></tr>
+                `;
+            }
+        }
+
+        function renderContents(data) {
+            if (data.length === 0) {
+                document.getElementById('contentTable').innerHTML = `
+                    <tr><td colspan="7">
+                        <div class="empty-state">
+                            <span class="material-symbols-outlined">movie</span>
+                            <h4>Belum ada content</h4>
+                            <p>Klik tombol "Tambah Content" untuk menambah content baru</p>
+                        </div>
+                    </td></tr>
+                `;
+                return;
+            }
+
+            document.getElementById('contentTable').innerHTML = data.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td><strong>${escapeHtml(c.name)}</strong></td>
+                    <td>Rp ${c.price.toLocaleString()}</td>
+                    <td><span class="badge ${c.type === 'FILE' ? 'badge-file' : 'badge-group'}">${c.type}</span></td>
+                    <td>${c._count?.files || 0}</td>
+                    <td>${c._count?.transactions || 0}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon" onclick="editContent(${c.id})" title="Edit">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button class="btn-icon delete" onclick="deleteContent(${c.id}, '${escapeHtml(c.name)}')" title="Hapus">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterContents() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = contents.filter(c =>
+                c.name.toLowerCase().includes(query) ||
+                c.id.toString().includes(query)
+            );
+            renderContents(filtered);
+        }
+
+        function openModal(content = null) {
+            document.getElementById('modal').classList.add('show');
+            document.getElementById('modalTitle').textContent = content ? 'Edit Content' : 'Tambah Content';
+
+            if (content) {
+                document.getElementById('contentId').value = content.id;
+                document.getElementById('name').value = content.name;
+                document.getElementById('price').value = content.price;
+                document.getElementById('type').value = content.type;
+                document.getElementById('description').value = content.description || '';
+                document.getElementById('groupChatId').value = content.groupChatId || '';
+                document.getElementById('inviteLink').value = content.inviteLink || '';
+
+                const isGroup = content.type === 'GROUP';
+                document.getElementById('groupFields').style.display = isGroup ? 'block' : 'none';
+                document.getElementById('inviteLinkField').style.display = isGroup ? 'block' : 'none';
+            } else {
+                document.getElementById('contentForm').reset();
+                document.getElementById('contentId').value = '';
+                document.getElementById('groupFields').style.display = 'none';
+                document.getElementById('inviteLinkField').style.display = 'none';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        async function editContent(id) {
+            try {
+                const response = await fetch(`/api/admin/contents/${id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const content = await response.json();
+                openModal(content);
+            } catch (error) {
+                alert('Gagal mengambil data content');
+            }
+        }
+
+        async function saveContent(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
+
+            const id = document.getElementById('contentId').value;
+            const data = {
+                name: document.getElementById('name').value,
+                price: document.getElementById('price').value,
+                type: document.getElementById('type').value,
+                description: document.getElementById('description').value,
+                groupChatId: document.getElementById('groupChatId').value || null,
+                inviteLink: document.getElementById('inviteLink').value || null
+            };
+
+            try {
+                const url = id ? `/api/admin/contents/${id}` : '/api/admin/contents';
+                const method = id ? 'PUT' : 'POST';
+
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Gagal menyimpan');
+                }
+
+                closeModal();
+                loadContents();
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan';
+            }
+        }
+
+        function deleteContent(id, name) {
+            deleteId = id;
+            document.getElementById('deleteContentName').textContent = name;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+            deleteId = null;
+        }
+
+        async function confirmDelete() {
+            if (!deleteId) return;
+
+            try {
+                const response = await fetch(`/api/admin/contents/${deleteId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Gagal menghapus');
+                }
+
+                closeDeleteModal();
+                loadContents();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadContents();
+    </script>
+</body>
+
+</html>

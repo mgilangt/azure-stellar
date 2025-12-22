@@ -5,6 +5,7 @@ import { logger } from 'hono/logger'
 import { cors } from 'hono/cors'
 import { createBot } from './bot'
 import { createWebhookRoutes } from './routes/webhook'
+import { createAdminRoutes } from './routes/admin'
 import { prisma } from './lib/prisma'
 import { getInvoice } from './services/xendit'
 import { deliverContent } from './services/delivery'
@@ -25,6 +26,33 @@ async function main() {
     // Register webhook routes
     const webhookRoutes = createWebhookRoutes(bot)
     app.route('/webhook', webhookRoutes)
+
+    // Register admin API routes
+    const adminRoutes = createAdminRoutes()
+    app.route('/api/admin', adminRoutes)
+
+    // Admin panel pages
+    app.get('/admin', (c) => c.redirect('/admin/login'))
+
+    app.get('/admin/login', (c) => {
+        const loginHtml = readFileSync(join(__dirname, 'view', 'admin', 'login.html'), 'utf-8')
+        return c.html(loginHtml)
+    })
+
+    app.get('/admin/dashboard', (c) => {
+        const dashboardHtml = readFileSync(join(__dirname, 'view', 'admin', 'dashboard.html'), 'utf-8')
+        return c.html(dashboardHtml)
+    })
+
+    app.get('/admin/content', (c) => {
+        const contentHtml = readFileSync(join(__dirname, 'view', 'admin', 'content.html'), 'utf-8')
+        return c.html(contentHtml)
+    })
+
+    app.get('/admin/files', (c) => {
+        const filesHtml = readFileSync(join(__dirname, 'view', 'admin', 'files.html'), 'utf-8')
+        return c.html(filesHtml)
+    })
 
     // Root route - serve landing page
     app.get('/', (c) => {
