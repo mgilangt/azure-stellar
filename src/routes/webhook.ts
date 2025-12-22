@@ -111,5 +111,95 @@ export function createWebhookRoutes(bot: Bot) {
         return c.json({ status: 'ok', timestamp: new Date().toISOString() })
     })
 
+    // QRIS payment webhook
+    webhook.post('/qris', async (c) => {
+        try {
+            // Verify webhook token
+            const webhookToken = c.req.header('x-callback-token')
+
+            if (!webhookToken || !verifyWebhookToken(webhookToken)) {
+                console.error('Invalid QRIS webhook token')
+                return c.json({ error: 'Invalid token' }, 401)
+            }
+
+            const payload = await c.req.json()
+
+            console.log('Received QRIS webhook:', {
+                id: payload.id,
+                external_id: payload.external_id,
+                status: payload.status,
+            })
+
+            // Find transaction by QRIS ID
+            const transaction = await prisma.transaction.findUnique({
+                where: { xenditInvoiceId: payload.id },
+                include: { user: true, content: true },
+            })
+
+            if (!transaction) {
+                // Try finding by external_id
+                const externalIdMatch = payload.external_id?.match(/TRX-(\d+)-/)
+                if (externalIdMatch) {
+                    const trxById = await prisma.transaction.findUnique({
+                        where: { id: parseInt(externalIdMatch[1]) },
+                        include: { user: true, content: true },
+                    })
+
+                    if (trxById && trxById.status !== 'PAID') {
+                        // Update transaction status
+                        await prisma.transaction.update({
+                            where: { id: trxById.id },
+                            data: {
+                                status: 'PAID',
+                                paidAt: new Date(),
+                            },
+                        })
+
+                        console.log(`QRIS Payment successful for transaction ${trxById.id}`)
+
+                        // Deliver content to user
+                        await deliverContent(
+                            bot,
+                            trxById.user.idTele,
+                            trxById.contentId
+                        )
+
+                        return c.json({ success: true, message: 'QRIS payment processed' })
+                    }
+                }
+
+                console.error('Transaction not found for QRIS:', payload.id)
+                return c.json({ error: 'Transaction not found' }, 404)
+            }
+
+            if (payload.status === 'COMPLETED' || payload.status === 'PAID') {
+                // Update transaction status
+                await prisma.transaction.update({
+                    where: { id: transaction.id },
+                    data: {
+                        status: 'PAID',
+                        paidAt: new Date(),
+                    },
+                })
+
+                console.log(`QRIS Payment successful for transaction ${transaction.id}`)
+
+                // Deliver content to user
+                await deliverContent(
+                    bot,
+                    transaction.user.idTele,
+                    transaction.contentId
+                )
+
+                return c.json({ success: true, message: 'QRIS payment processed and content delivered' })
+            }
+
+            return c.json({ success: true, message: 'QRIS webhook received' })
+        } catch (error) {
+            console.error('QRIS Webhook error:', error)
+            return c.json({ error: 'Internal server error' }, 500)
+        }
+    })
+
     return webhook
 }

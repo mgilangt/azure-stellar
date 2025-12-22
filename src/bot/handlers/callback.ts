@@ -1,7 +1,7 @@
-import { Bot, Context, InlineKeyboard } from 'grammy'
+import { Bot, Context, InlineKeyboard, InputFile } from 'grammy'
 import { prisma } from '../../lib/prisma'
 import { getContentById, formatPrice } from '../../services/product'
-import { createInvoice } from '../../services/xendit'
+import { createQRIS, generateQRImage } from '../../services/xendit'
 
 export function registerCallbackHandlers(bot: Bot) {
     // Handle product selection (buy_<id>)
@@ -108,46 +108,43 @@ export function registerCallbackHandlers(bot: Bot) {
                 },
             })
 
-            // Create Xendit invoice
-            const invoice = await createInvoice({
+            // Create Xendit QRIS
+            const qris = await createQRIS({
                 externalId: `TRX-${transaction.id}-${Date.now()}`,
-                transactionId: transaction.id,
                 amount: content.price,
                 description: `Pembelian: ${content.name}`,
-                customerName: ctx.from.first_name,
             })
 
-            // Update transaction with invoice details
+            // Update transaction with QRIS details
             await prisma.transaction.update({
                 where: { id: transaction.id },
                 data: {
-                    xenditInvoiceId: invoice.id,
-                    paymentUrl: invoice.invoice_url,
+                    xenditInvoiceId: qris.id,
                 },
             })
 
-            // Send payment link to user
-            const keyboard = new InlineKeyboard()
-                .url('💳 Bayar Sekarang', invoice.invoice_url)
-                .row()
-                .text('❌ Batalkan', `cancel_${transaction.id}`)
+            // Generate QR code image
+            const qrBuffer = await generateQRImage(qris.qr_string)
 
-            await ctx.editMessageText(
-                `🧾 *Invoice Pembayaran*\n\n` +
-                `Produk: *${content.name}*\n` +
-                `Total: *${formatPrice(content.price)}*\n\n` +
-                `Klik tombol di bawah untuk melakukan pembayaran.\n` +
-                `Invoice berlaku selama 24 jam.\n\n` +
-                `_Setelah pembayaran berhasil, produk akan dikirim otomatis._`,
-                {
-                    parse_mode: 'Markdown',
-                    reply_markup: keyboard,
-                }
-            )
+            // Delete the previous message
+            await ctx.deleteMessage()
+
+            // Send QR code image to user
+            await ctx.replyWithPhoto(new InputFile(qrBuffer, 'qris.png'), {
+                caption: `🧾 *QRIS Pembayaran*\n\n` +
+                    `Produk: *${content.name}*\n` +
+                    `Total: *${formatPrice(content.price)}*\n\n` +
+                    `📱 Scan QR code di atas dengan aplikasi e-wallet atau mobile banking.\n\n` +
+                    `⏰ Berlaku 24 jam.\n` +
+                    `_Setelah pembayaran berhasil, produk akan dikirim otomatis._`,
+                parse_mode: 'Markdown',
+                reply_markup: new InlineKeyboard()
+                    .text('❌ Batalkan', `cancel_${transaction.id}`),
+            })
         } catch (error) {
-            console.error('Error creating invoice:', error)
+            console.error('Error creating QRIS:', error)
             await ctx.editMessageText(
-                '❌ Terjadi kesalahan saat membuat invoice.\n' +
+                '❌ Terjadi kesalahan saat membuat QRIS.\n' +
                 'Silakan coba lagi atau hubungi admin.'
             )
         }
