@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int           @id @default(autoincrement())
+  idTele    String        @unique @map("id_tele")
+  nama      String
+  createdAt DateTime      @default(now()) @map("created_at")
+  
+  transactions Transaction[]
+  
+  @@map("users")
+}
+
+model Content {
+  id          Int           @id @default(autoincrement())
+  name        String
+  price       Int
+  description String?       @db.Text
+  createdAt   DateTime      @default(now()) @map("created_at")
+  
+  files        ContentFile[]
+  transactions Transaction[]
+  
+  @@map("contents")
+}
+
+model ContentFile {
+  id        Int      @id @default(autoincrement())
+  contentId Int      @map("content_id")
+  name      String
+  mediaUrl  String   @map("media_url") @db.Text
+  fileType  String   @map("file_type") // photo, video, document
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  
+  @@map("content_files")
+}
+
+model Transaction {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  contentId       Int       @map("content_id")
+  amount          Int
+  xenditInvoiceId String?   @unique @map("xendit_invoice_id")
+  paymentUrl      String?   @map("payment_url") @db.Text
+  qrString        String?   @map("qr_string") @db.Text
+  status          String    @default("PENDING") // PENDING, PAID, EXPIRED, FAILED
+  paidAt          DateTime? @map("paid_at")
+  expiredAt       DateTime? @map("expired_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  
+  user    User    @relation(fields: [userId], references: [id])
+  content Content @relation(fields: [contentId], references: [id])
+  
+  @@map("transactions")
+}
