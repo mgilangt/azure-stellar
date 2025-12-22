@@ -124,10 +124,10 @@ async function main() {
     console.log('👤 Creating admin user...')
 
     const bcrypt = await import('bcryptjs')
-    const hashedPassword = await bcrypt.hash('admin123', 10)
+    const hashedPassword = await bcrypt.hash('123123123', 10)
 
     const existingAdmin = await prisma.user.findFirst({
-        where: { email: 'admin@miniseri.com' }
+        where: { email: 'admin@min.id' }
     })
 
     if (existingAdmin) {
@@ -143,7 +143,7 @@ async function main() {
         await prisma.user.create({
             data: {
                 nama: 'Administrator',
-                email: 'admin@miniseri.com',
+                email: 'admin@min.id',
                 password: hashedPassword,
                 userType: 'ADMIN'
             }
@@ -153,8 +153,8 @@ async function main() {
 
     console.log('')
     console.log('🔐 Admin Credentials:')
-    console.log('   Email: admin@miniseri.com')
-    console.log('   Password: admin123')
+    console.log('   Email: admin@min.id')
+    console.log('   Password: 123123123')
     console.log('')
 }
 
