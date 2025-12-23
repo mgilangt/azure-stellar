@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Transaksi - Admin Miniseri</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    <meta name="theme-color" content="#0d0a10">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: #0d0a10;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 260px;
+            background: linear-gradient(180deg, #1a0f1f 0%, #0d0a10 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px;
+            margin-bottom: 32px;
+        }
+
+        .sidebar-logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+        }
+
+        .sidebar-logo h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sidebar-logo span {
+            font-size: 11px;
+            color: #64748b;
+            display: block;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(238, 29, 147, 0.15) 0%, rgba(238, 39, 46, 0.15) 100%);
+            color: #EE1D93;
+        }
+
+        .nav-item .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(45, 27, 54, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 12px 16px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-bar .material-symbols-outlined {
+            color: #64748b;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: #64748b;
+        }
+
+        .filter-select {
+            background: rgba(45, 27, 54, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            min-width: 150px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #EE1D93;
+        }
+
+        .filter-select option {
+            background: #1a0f1f;
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(45, 27, 54, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        th {
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .badge-paid {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .badge-expired {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .badge-failed {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-info .name {
+            font-weight: 500;
+        }
+
+        .user-info .tele-id {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .content-name {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .amount {
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .date {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .empty-state .material-symbols-outlined {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h4 {
+            font-size: 18px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(238, 29, 147, 0.2);
+            border-top-color: #EE1D93;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Stats Summary */
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(45, 27, 54, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .stat-card.pending .stat-value {
+            color: #f59e0b;
+        }
+
+        .stat-card.paid .stat-value {
+            color: #22c55e;
+        }
+
+        .stat-card.expired .stat-value {
+            color: #ef4444;
+        }
+
+        .stat-card.revenue .stat-value {
+            color: #EE1D93;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="/assets/logo.png" alt="Miniseri" loading="lazy">
+            <div>
+                <h1>Miniseri</h1>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+
+        <nav>
+            <div class="nav-section">
+                <div class="nav-section-title">Menu</div>
+                <a href="/admin/dashboard" class="nav-item">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="/admin/content" class="nav-item">
+                    <span class="material-symbols-outlined">movie</span>
+                    Kelola Content
+                </a>
+                <a href="/admin/files" class="nav-item">
+                    <span class="material-symbols-outlined">folder</span>
+                    Kelola File
+                </a>
+                <a href="/admin/transactions" class="nav-item active">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    Transaksi
+                </a>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                Keluar
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h2>Transaksi</h2>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="stats-summary" id="statsSummary">
+            <div class="stat-card pending">
+                <div class="stat-value" id="pendingCount">-</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card paid">
+                <div class="stat-value" id="paidCount">-</div>
+                <div class="stat-label">Berhasil</div>
+            </div>
+            <div class="stat-card expired">
+                <div class="stat-value" id="expiredCount">-</div>
+                <div class="stat-label">Expired</div>
+            </div>
+            <div class="stat-card revenue">
+                <div class="stat-value" id="totalRevenue">-</div>
+                <div class="stat-label">Total Pendapatan</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="search-bar">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" id="searchInput" placeholder="Cari user atau content..."
+                    oninput="filterTransactions()">
+            </div>
+            <select class="filter-select" id="statusFilter" onchange="loadTransactions()">
+                <option value="">Semua Status</option>
+                <option value="PENDING">Pending</option>
+                <option value="PAID">Paid</option>
+                <option value="EXPIRED">Expired</option>
+                <option value="FAILED">Failed</option>
+            </select>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Content</th>
+                        <th>Jumlah</th>
+                        <th>Status</th>
+                        <th>Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionsTable">
+                    <tr>
+                        <td colspan="6">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const token = localStorage.getItem('adminToken');
+        let transactions = [];
+
+        // Check auth
+        if (!token) {
+            window.location.href = '/admin/login';
+        }
+
+        // Load transactions
+        async function loadTransactions() {
+            const status = document.getElementById('statusFilter').value;
+            const url = status ? `/api/admin/transactions?status=${status}` : '/api/admin/transactions';
+
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.status === 401) {
+                    localStorage.removeItem('adminToken');
+                    window.location.href = '/admin/login';
+                    return;
+                }
+
+                const data = await response.json();
+                transactions = data.transactions || [];
+
+                // Update stats
+                if (data.stats) {
+                    document.getElementById('pendingCount').textContent = data.stats.pending || 0;
+                    document.getElementById('paidCount').textContent = data.stats.paid || 0;
+                    document.getElementById('expiredCount').textContent = data.stats.expired || 0;
+                    document.getElementById('totalRevenue').textContent = `Rp ${(data.stats.revenue || 0).toLocaleString()}`;
+                }
+
+                renderTransactions(transactions);
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('transactionsTable').innerHTML = `
+                    <tr><td colspan="6" class="empty-state">
+                        <span class="material-symbols-outlined">error</span>
+                        <h4>Gagal memuat data</h4>
+                        <p><a href="javascript:loadTransactions()" style="color: #EE1D93;">Coba lagi</a></p>
+                    </td></tr>
+                `;
+            }
+        }
+
+        function renderTransactions(data) {
+            if (data.length === 0) {
+                document.getElementById('transactionsTable').innerHTML = `
+                    <tr><td colspan="6">
+                        <div class="empty-state">
+                            <span class="material-symbols-outlined">receipt_long</span>
+                            <h4>Belum ada transaksi</h4>
+                            <p>Transaksi akan muncul setelah user melakukan pembelian</p>
+                        </div>
+                    </td></tr>
+                `;
+                return;
+            }
+
+            document.getElementById('transactionsTable').innerHTML = data.map(t => `
+                <tr>
+                    <td>${t.id}</td>
+                    <td>
+                        <div class="user-info">
+                            <span class="name">${escapeHtml(t.user?.nama || '-')}</span>
+                            <span class="tele-id">${t.user?.idTele || '-'}</span>
+                        </div>
+                    </td>
+                    <td class="content-name">${escapeHtml(t.content?.name || '-')}</td>
+                    <td class="amount">Rp ${t.amount.toLocaleString()}</td>
+                    <td><span class="badge badge-${t.status.toLowerCase()}">${t.status}</span></td>
+                    <td>
+                        <div class="date">${formatDate(t.createdAt)}</div>
+                        ${t.paidAt ? `<div class="date" style="color: #22c55e;">Paid: ${formatDate(t.paidAt)}</div>` : ''}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterTransactions() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = transactions.filter(t =>
+                t.user?.nama?.toLowerCase().includes(query) ||
+                t.user?.idTele?.toLowerCase().includes(query) ||
+                t.content?.name?.toLowerCase().includes(query) ||
+                t.id.toString().includes(query)
+            );
+            renderTransactions(filtered);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/admin/login';
+        }
+
+        loadTransactions();
+    </script>
+</body>
+
+</html>

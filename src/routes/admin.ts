@@ -295,5 +295,49 @@ export function createAdminRoutes() {
         }
     })
 
+    // ============ TRANSACTIONS ROUTES ============
+
+    // List transactions
+    admin.get('/transactions', authMiddleware, async (c) => {
+        try {
+            const status = c.req.query('status')
+
+            const where = status ? { status: status as any } : {}
+
+            const [transactions, stats] = await Promise.all([
+                prisma.transaction.findMany({
+                    where,
+                    include: {
+                        user: { select: { id: true, nama: true, idTele: true } },
+                        content: { select: { id: true, name: true } }
+                    },
+                    orderBy: { createdAt: 'desc' }
+                }),
+                Promise.all([
+                    prisma.transaction.count({ where: { status: 'PENDING' } }),
+                    prisma.transaction.count({ where: { status: 'PAID' } }),
+                    prisma.transaction.count({ where: { status: 'EXPIRED' } }),
+                    prisma.transaction.aggregate({
+                        where: { status: 'PAID' },
+                        _sum: { amount: true }
+                    })
+                ])
+            ])
+
+            return c.json({
+                transactions,
+                stats: {
+                    pending: stats[0],
+                    paid: stats[1],
+                    expired: stats[2],
+                    revenue: stats[3]._sum.amount || 0
+                }
+            })
+        } catch (error) {
+            console.error('Get transactions error:', error)
+            return c.json({ error: 'Gagal mengambil data transaksi' }, 500)
+        }
+    })
+
     return admin
 }

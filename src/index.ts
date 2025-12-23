@@ -54,6 +54,11 @@ async function main() {
         return c.html(filesHtml)
     })
 
+    app.get('/admin/transactions', (c) => {
+        const transactionsHtml = readFileSync(join(__dirname, 'view', 'admin', 'transactions.html'), 'utf-8')
+        return c.html(transactionsHtml)
+    })
+
     // Root route - serve landing page
     app.get('/', (c) => {
         const landingHtml = readFileSync(join(__dirname, 'view', 'landing.html'), 'utf-8')
